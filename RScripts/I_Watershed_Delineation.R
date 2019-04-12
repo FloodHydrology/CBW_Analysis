@@ -33,7 +33,7 @@ HUC08<-st_read(paste0(data_dir,"NHDPlus02/Subbasin.shp"))
 
 #Organzie pnt data
 pnts_CPB<- pnts_CPB %>% dplyr::select(CBW_ID, Latitude, Longitude)
-pnts_MBSS<- pnts_MBSS %>% dplyr::select(CBW_ID, Latitude83, Longitude83) %>% rename(Latitude = Latitude83, Longitude = Longitude83)
+pnts_MBSS<- pnts_MBSS %>% dplyr::select(CBW_ID, Latitude83, Longitude83) %>% rename(Latitude = Latitude83, Longitude = Longitude83) %>% mutate( Longitude = -1*Longitude)
 pnts<-rbind(pnts_CPB, pnts_MBSS)
 pnts<-st_as_sf(pnts, 
                coords=c("Longitude","Latitude"), 
