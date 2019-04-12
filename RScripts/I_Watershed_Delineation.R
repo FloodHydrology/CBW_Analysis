@@ -196,8 +196,3 @@ x<-parLapply(cl, seq(1,length(files)), copy_fun) #Run execute Function
 stopCluster(cl)  #Turn clusters off
 tf<-Sys.time()
 tf-t0
-
-
-
-
-
