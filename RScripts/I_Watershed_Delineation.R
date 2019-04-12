@@ -164,8 +164,39 @@ fun<-function(n){
                "--d8_pntr='fdr.tif'", 
                "--pour_pts='snap.shp'",
                paste0("-o='watershed_", HUC$HUC_8, ".tif")))
+  
+  #Print n for status update 
+  print(n)
 }
   
 #Execute Function
 lapply(seq(1, nrow(HUC08)), fun)
+
+#######################################################################
+#Copy watershed shapes to server---------------------------------------
+#######################################################################
+#Identify watershed files
+files<-list.files(scratch_dir)
+files<-files[substr(files, 1,9)=="watershed"]
+
+#Copy files to data directory
+copy_fun<-function(n){
+  print(n)
+  file.copy(from = paste0(scratch_dir, files[n]), 
+            to   = paste0(data_dir, files[n]))
+}
+
+#Cun copy function
+t0<-Sys.time()
+n.cores<-detectCores() #detect number of cores
+cl <- makePSOCKcluster(n.cores) #Create Clusters
+clusterExport(cl, c('scratch_dir', 'data_dir','files'), env=environment())  #Send Clusters function with the execute function
+x<-parLapply(cl, seq(1,length(files)), copy_fun) #Run execute Function
+stopCluster(cl)  #Turn clusters off
+tf<-Sys.time()
+tf-t0
+
+
+
+
 
