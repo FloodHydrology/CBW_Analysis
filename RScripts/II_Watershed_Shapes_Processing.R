@@ -82,15 +82,17 @@ attributes_fun<-function(n){
                        max(w_pnts$y,na.rm = F)+res(w_grd)[2]*10))
   
   #convert to polygon
-  w_shp<- w_grd %>% st_as_stars() %>% st_as_sf(., as_points = FALSE, merge = TRUE) #rasterToPolygons(w_grd, dissolve = T)
+  w_shp<- w_grd %>% st_as_stars() %>% st_as_sf(., merge = TRUE) #rasterToPolygons(w_grd, dissolve = T)
   w_shp<-st_as_sf(w_shp)
+  w_shp<-st_combine(w_shp)
   st_crs(w_shp)<-st_crs(snap_shp)
   
   #Identify pour point of interest 
-  pp_shp<-snap_shp[st_buffer(w_shp,1000),]
-  w_line<-st_cast(w_shp, "LINESTRING")
+  pp_shp<-snap_shp[st_buffer(w_shp,100),]
+  w_line<-st_cast(w_shp, "MULTILINESTRING")
   pp_shp$dist<-st_distance(pp_shp, w_line, by_element = T)
   pp_shp<-pp_shp[pp_shp$dist==min(pp_shp$dist, na.rm=T),]
+  if(nrow(pp_shp)>1){pp_shp<-pp_shp[1,]}
   ID<-pp_shp$id
   
   #Export watershed shapes
@@ -110,4 +112,5 @@ job     <- slurm_apply(attributes_fun,
 print_job_status(job)
 cleanup_files(job)
 
-
+#For testing!
+for(i in 207:nrow(watershed_index)){print(i);attributes_fun(i)}
