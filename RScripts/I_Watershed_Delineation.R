@@ -148,7 +148,8 @@ fun<-function(n){
                      coords=c("x","y"), 
                      crs=paste(dem@crs))
   st_write(snappnts, paste0(scratch_dir,"snap.shp"), delete_layer = T)
-
+  st_write(snappnts, paste0(data_dir,"sheds_pp/snap_",HUC$HUC_8,".shp"), delete_layer = T)
+  
   #Delineate wateshed-------------------------------------------------
   #Run flow direction 
   system(paste(paste(wbt_dir), 
@@ -183,7 +184,8 @@ files<-files[substr(files, 1,9)=="watershed"]
 copy_fun<-function(n){
   print(n)
   file.copy(from = paste0(scratch_dir, files[n]), 
-            to   = paste0(data_dir, files[n]))
+            to   = paste0(data_dir, "sheds_unnested/", files[n]), 
+            overwrite = T)
 }
 
 #Cun copy function
