@@ -93,7 +93,7 @@ attributes_fun<-function(n){
   pp_shp$dist<-st_distance(pp_shp, w_line, by_element = T)
   pp_shp<-pp_shp[pp_shp$dist==min(pp_shp$dist, na.rm=T),]
   if(nrow(pp_shp)>1){pp_shp<-pp_shp[1,]}
-  ID<-pp_shp$id
+  ID<-pp_shp$CBW_ID
   
   #Export watershed shapes
   st_write(w_shp, paste0(data_dir, "sheds_poly/watershed_",ID,".shp"), delete_layer = T)
@@ -106,7 +106,7 @@ params  <- data.frame(n=seq(1,nrow(watershed_index)))
 job     <- slurm_apply(attributes_fun, 
                        params,
                        add_objects = c("data_dir", "watershed_index", "snap_shp"),
-                       nodes = 12, cpus_per_node=8,
+                       nodes = 24, cpus_per_node=8,
                        pkgs=c('sf','raster','stars','tidyverse'),
                        slurm_options = sopts)
 print_job_status(job)
