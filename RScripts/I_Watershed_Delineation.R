@@ -108,7 +108,7 @@ fun<-function(n){
 
   #Create Pour Points~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #Create UID 
-  pnts$id<-seq(0, nrow(pnts)-1)
+  pnts$id<-seq(1, nrow(pnts))
 
   #Export pour point to scratch directory 
   st_write(pnts, paste0(scratch_dir,"pnts.shp"), delete_layer = T)
@@ -141,6 +141,11 @@ fun<-function(n){
     mutate(x = (snap_length %% ncol(snapgrid))*res(snapgrid)[1]+extent(snapgrid)[1]-res(snapgrid)[1]/2, 
            y = extent(snapgrid)[4]-((ceiling(snap_length/ncol(snapgrid)))*res(snapgrid)[2])+res(snapgrid)[2]/2,
            id= snapvalues)
+  
+  #ADd CWB_ID 
+  temp<-tibble(id = as.numeric(paste(pnts$id)),
+               CBW_ID = pnts$CBW_ID)
+  snappnts<-left_join(snappnts, temp, by='id')
   
   #Create sf file and export to workspace
   snappnts<-st_as_sf(snappnts, 
