@@ -111,6 +111,3 @@ job     <- slurm_apply(attributes_fun,
                        slurm_options = sopts)
 print_job_status(job)
 cleanup_files(job)
-
-#For testing!
-for(i in 207:nrow(watershed_index)){print(i);attributes_fun(i)}
