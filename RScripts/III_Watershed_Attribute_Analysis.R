@@ -158,4 +158,23 @@ print_job_status(slurm_run)
 results <- get_slurm_out(slurm_run, outtype = "table")
 cleanup_files(slurm_run)
 
+#Identify errors to deal with later
+errors<-results$CBW_ID[results$var=="error"]
+results<-results %>% filter(var != "error", 
+                            var != 'nlcd_NA')
 
+#2.3 Create Output Datasets-----------------------------------------------------
+#Create long dataset 
+output_long<-results
+
+#Create wide datset
+output_wide<-results %>% as_tibble() %>%
+  mutate(key = if_else(substr(var,1,4)=="nlcd", 
+                       paste0(year,"_",var),
+                       var)) %>%
+  select(key, value, CBW_ID) %>%
+  spread(key, value)
+
+#write outputs
+write_csv(output_long, paste0(data_dir,"output_long.csv"))
+write_csv(output_wide, paste0(data_dir,"output_wide.csv"))
